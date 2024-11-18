@@ -1,0 +1,85 @@
+---
+- hosts: scaleway
+  become: true
+
+  vars_files:
+    - secrets.yaml
+
+  tasks:
+    - name: Stop Docker Compose services
+      command: docker-compose /home/ubuntu/docker/docker-compose.yml down
+      args:
+        removes: true
+      ignore_errors: true
+
+    - name: Remove Docker containers
+      community.docker.docker_container:
+        name: "{{ item }}"
+        state: absent
+        force_kill: true
+      loop:
+        - docker-wordpress-1
+        - docker-database-1
+      ignore_errors: yes
+
+    - name: Remove Docker images
+      community.docker.docker_image:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - wordpress:latest
+        - mysql:8.0
+      ignore_errors: yes
+
+    - name: Remove docker folder
+      file:
+        path: /home/ubuntu/docker
+        state: absent
+
+    - name: Remove Nginx WordPress configuration file
+      file:
+        path: /etc/nginx/sites-available/wordpress
+        state: absent
+
+    - name: Remove Nginx symlink for WordPress configuration
+      file:
+        path: /etc/nginx/sites-enabled/wordpress
+        state: absent
+
+    - name: Restart Nginx to apply configuration changes
+      systemd:
+        name: nginx
+        state: restarted
+
+    - name: Remove container data volume (optional)
+      file:
+        path: "/var/lib/docker/volumes"
+        state: absent
+      ignore_errors: true
+
+    - name: Disable Docker service on boot
+      systemd:
+        name: docker
+        enabled: false
+      ignore_errors: true
+
+    - name: Remove Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+        state: absent
+
+    - name: Remove Docker GPG key
+      file:
+        path: /tmp/docker.gpg
+        state: absent
+
+    - name: Remove Docker service
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose
+          - docker-compose-plugin
+        state: absent
+      ignore_errors: true

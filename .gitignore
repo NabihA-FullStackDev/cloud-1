@@ -1,2 +1,7 @@
 *.env
 keys/
+secrets.yml
+certificats/
+*.sql
+*.init
+zbackup_bdd.yml

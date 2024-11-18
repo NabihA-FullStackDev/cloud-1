@@ -1,0 +1,29 @@
+- name: Download Docker GPG key
+  get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /tmp/docker.gpg
+
+- name: Add Docker GPG key
+  command: apt-key add /tmp/docker.gpg
+  become: true
+
+- name: Set up Docker repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+    state: present
+
+- name: Install Docker and Docker Compose
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose
+      - docker-compose-plugin
+    state: present
+
+- name: Start and enable Docker service
+  systemd:
+    name: docker
+    enabled: true
+    state: started

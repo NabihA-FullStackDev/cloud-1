@@ -1,0 +1,14 @@
+- name: Update apt and install dependencies
+  apt:
+    update_cache: yes
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - nginx
+      - certbot
+      - python3-certbot-nginx
+      - apache2-utils
+      - python3-pymysql
+    state: present
