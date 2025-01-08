@@ -7,3 +7,4 @@ certificats/
 testssh*
 .DS_Store
 zbackup_bdd.yml
+shared
