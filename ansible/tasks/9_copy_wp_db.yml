@@ -1,0 +1,18 @@
+- name: Attendre que le conteneur WordPress soit prêt
+  pause:
+    seconds: 20
+
+- name: Vérifier si le fichier de sauvegarde existe
+  ansible.builtin.stat:
+    path: /home/ubuntu/docker/mysql/backup.sql
+  register: file_check
+
+- name: Copier le fichier de sauvegarde dans le conteneur
+  ansible.builtin.command:
+    cmd: docker cp /home/ubuntu/docker/mysql/backup.sql docker-database-1:/tmp/backup.sql
+  when: file_check.stat.exists
+
+- name: Importer la base de données depuis le fichier dans le conteneur
+  ansible.builtin.command:
+    cmd: docker exec docker-database-1 sh -c "mysql -u{{ db_admin }} -p{{ db_admin_pwd }} {{ db_name }} < /tmp/backup.sql"
+  when: file_check.stat.exists

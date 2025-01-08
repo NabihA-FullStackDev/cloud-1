@@ -1,0 +1,33 @@
+- name: Sauvegarde de la base de données dans Docker
+  hosts: scaleway
+  vars:
+    db_user: "root"
+    db_password: "ouwehkjrb3jkijo8eTRe3"
+    db_name: "wordpress"
+    remote_backup_dir: "/tmp"
+    local_backup_dir: "./backup_auto"
+    docker_container: "docker-database-1"
+  tasks:
+    - name: Créer une sauvegarde de la base de données dans le conteneur Docker
+      ansible.builtin.shell: |
+        docker exec {{ docker_container }} mysqldump -u{{ db_user }} -p{{ db_password }} {{ db_name }} > {{ remote_backup_dir }}/backup.sql
+      become: yes
+      args:
+        executable: /bin/bash
+
+    - name: Vérifier que le répertoire local des sauvegardes existe
+      ansible.builtin.file:
+        path: "{{ local_backup_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copier la sauvegarde SQL sur la machine locale
+      ansible.builtin.fetch:
+        src: "{{ remote_backup_dir }}/backup.sql"
+        dest: "{{ local_backup_dir }}/backup_{{ ansible_date_time.iso8601_basic }}.sql"
+        flat: yes
+
+    - name: Supprimer la sauvegarde temporaire du serveur distant
+      ansible.builtin.file:
+        path: "{{ remote_backup_dir }}/backup.sql"
+        state: absent

@@ -1,0 +1,71 @@
+- name: Ensure archive directory exists for codenaali.com
+  file:
+    path: "/etc/letsencrypt/archive/{{ domain }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Copy cert1.pem to archive directory on the server
+  copy:
+    src: "../certificats/{{ domain }}/cert1.pem"
+    dest: "/etc/letsencrypt/archive/{{ domain }}/cert1.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy chain1.pem to archive directory on the server
+  copy:
+    src: "../certificats/{{ domain }}/chain1.pem"
+    dest: "/etc/letsencrypt/archive/{{ domain }}/chain1.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy fullchain1.pem to archive directory on the server
+  copy:
+    src: "../certificats/{{ domain }}/fullchain1.pem"
+    dest: "/etc/letsencrypt/archive/{{ domain }}/fullchain1.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy privkey1.pem to archive directory on the server
+  copy:
+    src: "../certificats/{{ domain }}/privkey1.pem"
+    dest: "/etc/letsencrypt/archive/{{ domain }}/privkey1.pem"
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Ensure live directory exists for symbolic links
+  file:
+    path: "/etc/letsencrypt/live/{{ domain }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Create symlink for cert.pem in live directory
+  file:
+    src: "/etc/letsencrypt/archive/{{ domain }}/cert1.pem"
+    dest: "/etc/letsencrypt/live/{{ domain }}/cert.pem"
+    state: link
+
+- name: Create symlink for chain.pem in live directory
+  file:
+    src: "/etc/letsencrypt/archive/{{ domain }}/chain1.pem"
+    dest: "/etc/letsencrypt/live/{{ domain }}/chain.pem"
+    state: link
+
+- name: Create symlink for fullchain.pem in live directory
+  file:
+    src: "/etc/letsencrypt/archive/{{ domain }}/fullchain1.pem"
+    dest: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+    state: link
+
+- name: Create symlink for privkey.pem in live directory
+  file:
+    src: "/etc/letsencrypt/archive/{{ domain }}/privkey1.pem"
+    dest: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
+    state: link

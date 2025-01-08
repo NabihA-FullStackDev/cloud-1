@@ -1,0 +1,10 @@
+- name: Get MySQL container ID
+  command: docker compose -f /home/ubuntu/docker/docker-compose.yml ps -q database
+  register: mysql_container_id
+  changed_when: false
+
+- name: Verify MySQL container ID
+  debug:
+    msg: "MySQL container ID is {{ mysql_container_id.stdout }}"
+
+#TODO: copier l'ancienne bdd dans le conteneur {{ mysql_container_id }}

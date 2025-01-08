@@ -1,2 +1,8 @@
 *.env
 keys/
+secrets.yml
+certificats/
+*.sql
+*.init
+testssh*
+.DS_Store

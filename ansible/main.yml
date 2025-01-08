@@ -1,0 +1,18 @@
+---
+- hosts: scaleway
+  become: true
+
+  vars_files:
+    - secrets.yml
+
+  tasks:
+    - include_tasks: tasks/1_setup_dependencies.yml
+    - include_tasks: tasks/2_configure_nginx.yml
+    - include_tasks: tasks/3_setup_docker.yml
+    - include_tasks: tasks/4_deploy_docker_comp.yml
+    - include_tasks: tasks/5_configure_mysql.yml
+    - include_tasks: tasks/6_copy_certificates.yml
+    - include_tasks: tasks/7_request_ssl_certificate.yml
+    - include_tasks: tasks/8_renew_ssl_certificate.yml
+    - include_tasks: tasks/9_copy_wp_db.yml
+    - include_tasks: tasks/end_install.yml

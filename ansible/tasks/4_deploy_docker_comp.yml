@@ -1,0 +1,19 @@
+- name: Ensure /home/ubuntu directory exists
+  file:
+    path: /home/ubuntu/docker
+    state: directory
+    mode: '0755'
+
+- name: Copy docker folder to the server
+  copy:
+    src: ../docker/
+    dest: /home/ubuntu/docker/
+    mode: '0644'
+
+- name: Ensure /home/ubuntu/docker/wordpress/entrypoint.sh is executable
+  file:
+    path: /home/ubuntu/docker/wordpress/entrypoint.sh
+    mode: '0755'
+
+- name: Run Docker Compose
+  command: docker compose -f /home/ubuntu/docker/docker-compose.yml --env-file /home/ubuntu/docker/.env up -d --remove-orphans

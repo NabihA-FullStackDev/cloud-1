@@ -1,0 +1,5 @@
+- name: Automatically renew SSL certificate if expiring soon
+  command: certbot renew --non-interactive --nginx --server https://api.buypass.com/acme/directory
+  register: certbot_renewed
+  changed_when: "'Congratulations' in certbot_renewed.stdout"
+  ignore_errors: true

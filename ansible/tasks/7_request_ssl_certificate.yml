@@ -1,0 +1,9 @@
+- name: Demander un certificat SSL si un fichier est manquant
+  command: >
+    certbot certonly --nginx -d {{ domain }} -d www.{{ domain }}
+    --non-interactive --agree-tos --email {{ email }}
+    --server https://api.buypass.com/acme/directory
+  when: not all_certificates_present
+  register: certbot_buypass
+  changed_when: "'Congratulations' in certbot_buypass.stdout"
+  ignore_errors: true

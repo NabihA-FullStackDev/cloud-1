@@ -1,0 +1,2 @@
+- Dans ce dossier ajoutez la sauvegarde de votre bdd mysql
+- nommez la backup.sql
