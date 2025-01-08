@@ -6,3 +6,4 @@ certificats/
 *.init
 testssh*
 .DS_Store
+zbackup_bdd.yml
